@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enviro365 Investments — Withdrawal Notices</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-950: #0A1F38;
+    --navy-900: #0F2A4A;
+    --navy-800: #163a63;
+    --gold-500: #E0A22E;
+    --gold-600: #C68A1F;
+    --paper: #F6F7FA;
+    --panel: #FFFFFF;
+    --ink-900: #1B2430;
+    --ink-600: #4A5568;
+    --ink-400: #8492A6;
+    --line: #E3E7EE;
+    --success: #1F8A55;
+    --success-bg: #EAF7EF;
+    --error: #C24444;
+    --error-bg: #FBEDED;
+    --radius: 4px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink-900);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  h1, h2, h3 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; margin: 0; }
+
+  /* ---------- Header ---------- */
+  header.app-header {
+    background: var(--navy-900);
+    color: #fff;
+    padding: 22px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--gold-500);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: conic-gradient(from 45deg, var(--gold-500), var(--gold-600), var(--gold-500));
+    flex-shrink: 0;
+  }
+  .brand-name { font-family: 'Source Serif 4', serif; font-size: 20px; font-weight: 600; letter-spacing: 0.2px; }
+  .brand-sub { font-size: 12.5px; color: #B9C6D8; margin-top: 1px; }
+
+  .investor-picker { display: flex; align-items: center; gap: 10px; }
+  .investor-picker label { font-size: 13px; color: #B9C6D8; }
+  .investor-picker select {
+    background: var(--navy-800);
+    color: #fff;
+    border: 1px solid #2A527F;
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    font-size: 14px;
+    min-width: 200px;
+  }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 1080px; margin: 0 auto; padding: 32px 40px 80px; }
+
+  nav.tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 28px;
+  }
+  nav.tabs button {
+    background: none;
+    border: none;
+    padding: 12px 18px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink-600);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+  }
+  nav.tabs button.active {
+    color: var(--navy-900);
+    border-bottom-color: var(--gold-500);
+    font-weight: 600;
+  }
+
+  section.view { display: none; }
+  section.view.active { display: block; }
+
+  /* ---------- Dashboard hero stat band ---------- */
+  .hero-band {
+    background: var(--navy-900);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 26px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+  }
+  .hero-band .investor-name { font-size: 24px; }
+  .hero-band .investor-meta { color: #AEC0D6; font-size: 13.5px; margin-top: 4px; }
+  .hero-band .total-value { text-align: right; }
+  .hero-band .total-value .amount { font-family: 'Source Serif 4', serif; font-size: 30px; font-weight: 600; }
+  .hero-band .total-value .label { color: #AEC0D6; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .product-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--gold-500);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .product-card .p-name { font-weight: 600; font-size: 15px; }
+  .product-card .p-type { color: var(--ink-400); font-size: 12.5px; margin-top: 2px; }
+  .product-card .p-balance { font-family: 'Source Serif 4', serif; font-size: 22px; margin-top: 12px; }
+
+  /* ---------- Panels / forms ---------- */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+    margin-bottom: 24px;
+  }
+  .panel h2 { font-size: 19px; margin-bottom: 4px; }
+  .panel .panel-sub { color: var(--ink-600); font-size: 13.5px; margin-bottom: 22px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 13px; font-weight: 500; color: var(--ink-600); }
+  .field select, .field input {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-size: 14.5px;
+    font-family: inherit;
+    color: var(--ink-900);
+    background: #fff;
+  }
+  .field select:focus, .field input:focus {
+    outline: none;
+    border-color: var(--navy-800);
+    box-shadow: 0 0 0 3px rgba(15,42,74,0.12);
+  }
+  .field .hint { font-size: 12px; color: var(--ink-400); }
+
+  .btn {
+    background: var(--navy-900);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 11px 22px;
+    font-size: 14.5px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .btn:hover { background: var(--navy-800); }
+  .btn:disabled { background: var(--ink-400); cursor: not-allowed; }
+  .btn.secondary {
+    background: #fff;
+    color: var(--navy-900);
+    border: 1px solid var(--navy-900);
+  }
+  .btn.secondary:hover { background: var(--paper); }
+
+  .feedback {
+    margin-top: 18px;
+    padding: 13px 16px;
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.success { background: var(--success-bg); color: var(--success); border: 1px solid #C7E9D4; }
+  .feedback.error { background: var(--error-bg); color: var(--error); border: 1px solid #F0CFCF; }
+  .feedback ul { margin: 6px 0 0; padding-left: 18px; }
+
+  /* ---------- History table ---------- */
+  .history-toolbar { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 18px; }
+  .history-toolbar .field { min-width: 160px; }
+
+  table.history-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.history-table th {
+    text-align: left;
+    color: var(--ink-600);
+    font-weight: 500;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  table.history-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  table.history-table tr:last-child td { border-bottom: none; }
+  .status-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .status-pill.approved { background: var(--success-bg); color: var(--success); }
+  .status-pill.rejected { background: var(--error-bg); color: var(--error); }
+
+  .empty-state { padding: 40px 0; text-align: center; color: var(--ink-400); font-size: 14px; }
+
+  .table-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div>
+      <div class="brand-name">Enviro365 Investments</div>
+      <div class="brand-sub">Withdrawal notice system</div>
+    </div>
+  </div>
+  <div class="investor-picker">
+    <label for="investorSelect">Investor</label>
+    <select id="investorSelect"></select>
+  </div>
+</header>
+
+<main>
+  <nav class="tabs">
+    <button class="tab-btn active" data-view="dashboard">Portfolio</button>
+    <button class="tab-btn" data-view="withdraw">New withdrawal</button>
+    <button class="tab-btn" data-view="history">History</button>
+  </nav>
+
+  <!-- ===== Dashboard ===== -->
+  <section id="view-dashboard" class="view active">
+    <div class="hero-band">
+      <div>
+        <div class="investor-name" id="dashName">—</div>
+        <div class="investor-meta" id="dashMeta">—</div>
+      </div>
+      <div class="total-value">
+        <div class="amount" id="dashTotal">R0.00</div>
+        <div class="label">Total portfolio value</div>
+      </div>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+
+  <!-- ===== Withdrawal form ===== -->
+  <section id="view-withdraw" class="view">
+    <div class="panel">
+      <h2>Submit a withdrawal notice</h2>
+      <div class="panel-sub">Withdrawals are checked against balance, the 90% cap, and — for retirement withdrawals — the investor's age, before being approved.</div>
+
+      <form id="withdrawForm">
+        <div class="form-grid">
+          <div class="field">
+            <label for="productSelect">Product</label>
+            <select id="productSelect" required></select>
+          </div>
+          <div class="field">
+            <label for="typeSelect">Withdrawal type</label>
+            <select id="typeSelect" required>
+              <option value="STANDARD">Standard</option>
+              <option value="RETIREMENT">Retirement</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="amountInput">Amount (R)</label>
+            <input type="number" id="amountInput" min="0.01" step="0.01" placeholder="0.00" required>
+            <div class="hint" id="balanceHint"></div>
+          </div>
+        </div>
+        <div style="margin-top:22px;">
+          <button type="submit" class="btn" id="submitBtn">Submit withdrawal</button>
+        </div>
+        <div class="feedback" id="withdrawFeedback"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== History ===== -->
+  <section id="view-history" class="view">
+    <div class="panel">
+      <h2>Withdrawal history</h2>
+      <div class="panel-sub">Filter the current investor's withdrawal notices, or export them as a CSV statement.</div>
+
+      <div class="history-toolbar">
+        <div class="field">
+          <label for="filterStatus">Status</label>
+          <select id="filterStatus">
+            <option value="">All</option>
+            <option value="APPROVED">Approved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filterType">Type</label>
+          <select id="filterType">
+            <option value="">All</option>
+            <option value="STANDARD">Standard</option>
+            <option value="RETIREMENT">Retirement</option>
+          </select>
+        </div>
+        <button class="btn secondary" id="applyFilters" type="button">Apply filters</button>
+      </div>
+
+      <div id="historyTableWrap"></div>
+
+      <div class="table-actions">
+        <button class="btn" id="downloadCsvBtn" type="button">Download CSV statement</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+// Point this at wherever the Spring Boot backend is running.
+const API_BASE = 'http://localhost:8081/api';
+
+const state = {
+  investors: [],
+  currentInvestorId: null,
+  portfolio: null,
+};
+
+const currency = (n) => 'R' + Number(n).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+// ---------- Tabs ----------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-' + btn.dataset.view).classList.add('active');
+    if (btn.dataset.view === 'history') loadHistory();
+  });
+});
+
+// ---------- API helper ----------
+async function api(path, options = {}) {
+  const res = await fetch(API_BASE + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+  });
+  if (!res.ok) {
+    let body;
+    try { body = await res.json(); } catch (e) { body = null; }
+    const err = new Error(body?.message || ('Request failed with status ' + res.status));
+    err.details = body?.details;
+    throw err;
+  }
+  const contentType = res.headers.get('content-type') || '';
+  return contentType.includes('application/json') ? res.json() : res.text();
+}
+
+// ---------- Bootstrapping ----------
+async function init() {
+  try {
+    state.investors = await api('/investors');
+    const select = document.getElementById('investorSelect');
+    select.innerHTML = state.investors.map(i => `<option value="${i.id}">${i.fullName}</option>`).join('');
+    if (state.investors.length) {
+      state.currentInvestorId = state.investors[0].id;
+      select.value = state.currentInvestorId;
+      await loadPortfolio();
+    }
+  } catch (e) {
+    showEmptyDashboardError(e);
+  }
+
+  document.getElementById('investorSelect').addEventListener('change', async (e) => {
+    state.currentInvestorId = Number(e.target.value);
+    await loadPortfolio();
+    const activeView = document.querySelector('.view.active').id;
+    if (activeView === 'view-history') loadHistory();
+  });
+}
+
+function showEmptyDashboardError(e) {
+  document.getElementById('dashName').textContent = 'Could not reach the backend';
+  document.getElementById('dashMeta').textContent = e.message + ' — is the Spring Boot app running on ' + API_BASE + '?';
+}
+
+// ---------- Portfolio dashboard ----------
+async function loadPortfolio() {
+  if (!state.currentInvestorId) return;
+  const portfolio = await api(`/portfolio/${state.currentInvestorId}`);
+  state.portfolio = portfolio;
+
+  document.getElementById('dashName').textContent = portfolio.fullName;
+  document.getElementById('dashMeta').textContent = `${portfolio.email} · Age ${portfolio.age}`;
+
+  const total = portfolio.products.reduce((sum, p) => sum + p.balance, 0);
+  document.getElementById('dashTotal').textContent = currency(total);
+
+  document.getElementById('productGrid').innerHTML = portfolio.products.map(p => `
+    <div class="product-card">
+      <div class="p-name">${p.productName}</div>
+      <div class="p-type">${p.productType.replace(/_/g, ' ')}</div>
+      <div class="p-balance">${currency(p.balance)}</div>
+    </div>
+  `).join('') || '<div class="empty-state">This investor holds no products.</div>';
+
+  const productSelect = document.getElementById('productSelect');
+  productSelect.innerHTML = portfolio.products.map(p =>
+    `<option value="${p.id}" data-balance="${p.balance}">${p.productName} — ${currency(p.balance)}</option>`
+  ).join('');
+  updateBalanceHint();
+}
+
+document.getElementById('productSelect').addEventListener('change', updateBalanceHint);
+function updateBalanceHint() {
+  const opt = document.getElementById('productSelect').selectedOptions[0];
+  const hint = document.getElementById('balanceHint');
+  if (!opt) { hint.textContent = ''; return; }
+  const balance = Number(opt.dataset.balance);
+  hint.textContent = `Available balance: ${currency(balance)} · maximum withdrawal (90%): ${currency(balance * 0.9)}`;
+}
+
+// ---------- Withdrawal form ----------
+document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const feedback = document.getElementById('withdrawFeedback');
+  const submitBtn = document.getElementById('submitBtn');
+  feedback.className = 'feedback';
+  feedback.innerHTML = '';
+
+  const payload = {
+    productId: Number(document.getElementById('productSelect').value),
+    amount: Number(document.getElementById('amountInput').value),
+    withdrawalType: document.getElementById('typeSelect').value,
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting…';
+  try {
+    const result = await api('/withdrawals', { method: 'POST', body: JSON.stringify(payload) });
+    feedback.className = 'feedback success show';
+    feedback.textContent = `Withdrawal of ${currency(result.amount)} approved. New balance: ${currency(result.balanceAfter)}.`;
+    document.getElementById('withdrawForm').reset();
+    await loadPortfolio();
+  } catch (err) {
+    feedback.className = 'feedback error show';
+    let html = err.message;
+    if (err.details && err.details.length) {
+      html += '<ul>' + err.details.map(d => `<li>${d}</li>`).join('') + '</ul>';
+    }
+    feedback.innerHTML = html;
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit withdrawal';
+  }
+});
+
+// ---------- History ----------
+document.getElementById('applyFilters').addEventListener('click', loadHistory);
+
+async function loadHistory() {
+  if (!state.currentInvestorId) return;
+  const status = document.getElementById('filterStatus').value;
+  const type = document.getElementById('filterType').value;
+
+  const params = new URLSearchParams({ investorId: state.currentInvestorId });
+  if (status) params.set('status', status);
+  if (type) params.set('withdrawalType', type);
+
+  const wrap = document.getElementById('historyTableWrap');
+  try {
+    const rows = await api('/withdrawals?' + params.toString());
+    if (!rows.length) {
+      wrap.innerHTML = '<div class="empty-state">No withdrawal notices match these filters.</div>';
+      return;
+    }
+    wrap.innerHTML = `
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date</th><th>Product</th><th>Type</th><th>Amount</th><th>Balance after</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td>${new Date(r.requestDate).toLocaleString('en-ZA')}</td>
+              <td>${r.productName}</td>
+              <td>${r.withdrawalType}</td>
+              <td>${currency(r.amount)}</td>
+              <td>${currency(r.balanceAfter)}</td>
+              <td><span class="status-pill ${r.status.toLowerCase()}">${r.status}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  } catch (e) {
+    wrap.innerHTML = `<div class="empty-state">${e.message}</div>`;
+  }
+}
+
+document.getElementById('downloadCsvBtn').addEventListener('click', async () => {
+  if (!state.currentInvestorId) return;
+  const status = document.getElementById('filterStatus').value;
+  const type = document.getElementById('filterType').value;
+  const params = new URLSearchParams({ investorId: state.currentInvestorId });
+  if (status) params.set('status', status);
+  if (type) params.set('withdrawalType', type);
+
+  try {
+    const res = await fetch(API_BASE + '/reports/withdrawals/csv?' + params.toString());
+    if (!res.ok) throw new Error('Could not generate the CSV export.');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'withdrawal_statement.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert(e.message);
+  }
+});
+
+init();
+</script>
+</body>
+</html>
